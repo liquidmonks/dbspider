@@ -24,6 +24,13 @@ DB_PASSWORD=your-password
 DB_NAME=your-database
 Add other configs as needed 
 5. Run the tool: python main.py  # Or your entry point script 
+
+## Security
+- Copy `.env.example` to `.env` and fill in your actual values.
+- The bot loads these via environment variables for secure configuration.
+- Never commit `.env` to Git—it's excluded via .gitignore.
+- For production, consider additional measures like encrypted secrets or vault services.
+
 ## Usage
 - **Basic Query Example:** 
   - python main.py --query "search term" This fetches data matching the query from the configured database and prints results.
