@@ -1,0 +1,10 @@
+{
+  "guild_id": "your-discord-guild-id",
+  "service_status_channels": [1234567890, "0987654321"],
+  "down_stream_channels": [1111111111, 2222222222],
+  "event_update_channels": [3333333333, 4444444444],
+  "find_cmd_channels": [5555555555, 6666666666],
+  "other_settings": {
+    "scoreboard_bot_id": 7777777777
+  }
+}
