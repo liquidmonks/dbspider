@@ -16,23 +16,33 @@ class Config:
                 h.update(chunk)
         return h.digest()
 
-    def reload_file(self, file):
-        file_hash = self.checksum(file)
+    def reload_file(self, filename):
+        file_hash = self.checksum(filename)
 
-        if file in self.files_to_hash and self.files_to_hash[file] == file_hash:
+        if filename in self.files_to_hash and self.files_to_hash[filename] == file_hash:
             return
 
-        self.files_to_hash[file] = file_hash
+        self.files_to_hash[filename] = file_hash
 
-        config_settings = toml.load(file)
-        self.toml_data.update(config_settings)
+        print(f"Attempting to load file: {filename}")  # Debug: Show which file is being processed
 
-        for config_setting in config_settings:
-            self.config_to_file[config_setting] = file
+        try:
+            with open(filename, 'r', encoding='utf-8') as f:
+                content = f.read()
+                print(f"File content preview (first 200 chars):\n{content[:200]}...\n")  # Debug: Show start of file
+                f.seek(0)  # Reset file pointer after reading content
+                config_settings = toml.load(f)
+            self.toml_data.update(config_settings)
+
+            for config_setting in config_settings:
+                self.config_to_file[config_setting] = filename
+        except Exception as e:
+            print(f"Error loading {filename}: {e}")  # Debug: Catch and show errors per file
+            raise
 
     def reload_files(self):
         for config_file in Path(CONFIG_FILE_PATH).iterdir():
-            if not config_file.is_file():
+            if not config_file.is_file() or config_file.suffix != '.toml':
                 continue
 
             config_str = str(config_file)
