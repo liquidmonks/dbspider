@@ -1,5 +1,6 @@
 import discord
 import aiomysql
+from settings import Settings  # Add this line
 from discord.ext import commands
 from tools import config, messages
 import sys, traceback
@@ -11,6 +12,7 @@ async def command_prefix(bot, message):
 class DiscordBot(commands.Bot):
 	def __init__(self, *args, **kwargs):
 		super(DiscordBot, self).__init__(*args, **kwargs)
+		self.settings = Settings()  # Instantiate Settings here
 		self.add_check(self.permissions_check)
 
 		self.no_command = []
