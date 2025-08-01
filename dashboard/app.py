@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 import os
 import json  # Moved to top
+import subprocess  # For bot controls
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY') or 'fallback_secret'  # Import os at top if not
@@ -77,6 +78,47 @@ def edit_config():
         current_config = {}
 
     return render_template('edit_config.html', config=current_config)
+
+
+bot_process = None  # Global to track bot process
+
+
+@app.route('/bot_control', methods=['POST'])
+@login_required
+def bot_control():
+    global bot_process
+    action = request.form['action']
+    if action == 'start':
+        if not bot_process or bot_process.poll() is not None:
+            bot_process = subprocess.Popen(['python', '../bot.py'])
+            flash('Bot started!')
+        else:
+            flash('Bot is already running.')
+    elif action == 'stop':
+        if bot_process and bot_process.poll() is None:
+            bot_process.terminate()
+            flash('Bot stopped!')
+        else:
+            flash('Bot is not running.')
+    elif action == 'restart':
+        if bot_process and bot_process.poll() is None:
+            bot_process.terminate()
+        bot_process = subprocess.Popen(['python', '../bot.py'])
+        flash('Bot restarted!')
+    return redirect(url_for('home'))
+
+
+@app.route('/logs')
+@login_required
+def logs():
+    log_file = '../data/bot.log'  # Path to bot log file (adjust if needed)
+    try:
+        with open(log_file, 'r') as f:
+            lines = f.readlines()[-100:]  # Last 100 lines
+            log_content = ''.join(lines)
+    except FileNotFoundError:
+        log_content = 'Log file not found.'
+    return render_template('logs.html', log_content=log_content)
 
 
 if __name__ == '__main__':
