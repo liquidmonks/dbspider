@@ -25,6 +25,8 @@ DB_NAME=your-database
 Add other configs as needed 
 5. Run the tool: python main.py  # Or your entry point script 
 
+- For Discord guild and channel IDs, copy `settings.json.example` to `settings.json` and update the values (use Discord's Developer Mode to get IDs from right-clicking servers/channels).
+
 ## Security
 - Copy `.env.example` to `.env` and fill in your actual values.
 - The bot loads these via environment variables for secure configuration.
